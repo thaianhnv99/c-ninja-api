@@ -1,9 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RequestService } from 'src/request.service';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
+  constructor(private readonly requestService: RequestService) {}
+
+  getUserId() {
+    const userId = this.requestService.getUserId();
+    this.logger.log('getHello userid::' + userId);
+
+    return userId;
+  }
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }

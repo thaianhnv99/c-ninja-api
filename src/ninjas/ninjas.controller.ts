@@ -9,13 +9,10 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { CreateNinjaDto } from './dto/create-ninja.dto';
 import { UpdateNinjaDto } from './dto/update-ninja.dto';
 import { NinjasService } from './ninjas.service';
-import { BeltGuard } from 'src/belt/belt.guard';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -26,9 +23,9 @@ import { EWeapon } from './entities/Ninja.entity';
 
 @ApiTags('ninjas')
 @Controller('ninjas')
-@UseGuards(BeltGuard)
 export class NinjasController {
   constructor(private readonly ninjaService: NinjasService) {}
+
   // GET /ninjas?weapon=stars --> []
   @Get()
   @ApiOkResponse({ type: CreateNinjaDto, isArray: true })
@@ -51,8 +48,7 @@ export class NinjasController {
   // POST /ninjas
   @Post()
   @ApiCreatedResponse({ type: CreateNinjaDto })
-  @UseGuards(BeltGuard)
-  createNinja(@Body(new ValidationPipe()) createNinjaDto: CreateNinjaDto) {
+  createNinja(@Body() createNinjaDto: CreateNinjaDto) {
     return this.ninjaService.createNinja(createNinjaDto);
   }
 
