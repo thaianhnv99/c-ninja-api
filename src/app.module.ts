@@ -7,13 +7,18 @@ import { NinjasController } from './ninjas/ninjas.controller';
 import { NinjasService } from './ninjas/ninjas.service';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { BeltGuard } from './belt/belt.guard';
+import { RequestService } from './request.service';
+import { UsersService } from './users/users.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [NinjasModule, UsersModule],
+  imports: [NinjasModule, UsersModule, AuthModule],
   controllers: [AppController, NinjasController],
   providers: [
     AppService,
     NinjasService,
+    RequestService,
+    UsersService,
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,

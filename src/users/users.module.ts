@@ -20,7 +20,7 @@ import { LoggingInterceptor } from 'src/interceptors/logging.interceptor';
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleware).forRoutes('*'); // For global
+    consumer.apply(AuthenticationMiddleware).forRoutes(UsersController); // For global
     // { path: '/path', method: RequestMethod.GET }
   }
 }
