@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon from 'argon2';
 import { AuthDto } from './dto';
@@ -20,8 +25,20 @@ export class AuthService {
   async signup(dto: AuthDto) {
     // generate the password hash
     const hash = await argon.hash(dto.password);
-    // Save the new user in the db
     try {
+      // find the ser by email
+      const userExits = await this.prismaService.user.findUnique({
+        where: {
+          email: dto.email,
+        },
+      });
+
+      // if user does not exits throw exception
+      if (userExits) {
+        throw new Error('InvalidEmail');
+      }
+
+      // Save the new user in the db
       const user = await this.prismaService.user.create({
         data: {
           email: dto.email,
@@ -36,6 +53,8 @@ export class AuthService {
         if (error.code === 'P2002') {
           throw new ForbiddenException('Credentials taken');
         }
+      } else if (error instanceof Error) {
+        throw new HttpException('Exits email', HttpStatus.CREATED);
       }
     }
   }
