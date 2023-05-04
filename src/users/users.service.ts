@@ -1,13 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RequestService } from 'src/request.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { instanceToPlain, plainToClass } from 'class-transformer';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
 
-  constructor(private readonly requestService: RequestService) {}
+  constructor(
+    private readonly requestService: RequestService,
+    private prismaService: PrismaService,
+  ) {}
 
   getUserId() {
     const userId = this.requestService.getUserId();
@@ -23,8 +29,20 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    try {
+      const userById = await this.prismaService.user.findFirst({
+        where: {
+          id: id,
+        },
+      });
+
+      return UserDto.plainToClass(userById);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new HttpException('Not found user by id', HttpStatus.FOUND);
+      }
+    }
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

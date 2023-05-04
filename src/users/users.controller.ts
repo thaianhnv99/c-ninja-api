@@ -22,14 +22,7 @@ export class UsersController {
   @UseGuards(JwtGuard)
   @Get('me')
   getMe(@GetUser() user: User, @GetUser('email') email: string) {
-    console.log(email);
     return user;
-  }
-
-  @Get()
-  getUserId() {
-    const userId = this.usersService.getUserId();
-    return `Hello, ${userId}`;
   }
 
   @Post()
