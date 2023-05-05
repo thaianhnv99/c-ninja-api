@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateNinjaDto } from './dto/create-ninja.dto';
 import { UpdateNinjaDto } from './dto/update-ninja.dto';
@@ -20,7 +21,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { EWeapon } from './entities/Ninja.entity';
+import { JwtGuard } from 'src/auth/guard';
 
+@UseGuards(JwtGuard)
 @ApiTags('ninjas')
 @Controller('ninjas')
 export class NinjasController {
